@@ -32,12 +32,12 @@ export function useSoloStats() {
   const undoWin = () => {
     setStats(prev => {
       if (prev.winCount === 0) return prev;
-      const newCount = prev.winCount - 1;
       const newStreak = Math.max(0, prev.currentStreak - 1);
       return {
-        ...prev,
-        winCount: newCount,
+        winCount: prev.winCount - 1,
         currentStreak: newStreak,
+        bestStreak: Math.max(newStreak, prev.currentStreak === prev.bestStreak ? newStreak : prev.bestStreak),
+        lastWinDate: prev.lastWinDate,
       };
     });
   };
