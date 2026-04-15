@@ -1,27 +1,41 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import { ConfigProvider, theme } from 'antd';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import Header from './components/Header';
+import ModeSelector from './components/ModeSelector';
+import SoloTracker from './components/SoloTracker';
+import TeamTracker from './components/TeamTracker';
+import type { AppMode } from './types';
 
-const queryClient = new QueryClient();
+const App = () => {
+  const [dark, setDark] = useLocalStorage('wt-dark', false);
+  const [mode, setMode] = useLocalStorage<AppMode>('wt-mode', 'solo');
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  return (
+    <ConfigProvider
+      theme={{
+        algorithm: dark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        token: {
+          colorPrimary: '#1677ff',
+          borderRadius: 8,
+        },
+      }}
+    >
+      <div
+        style={{
+          minHeight: '100vh',
+          background: dark ? '#141414' : '#f5f5f5',
+          padding: '0 16px 32px',
+          maxWidth: 480,
+          margin: '0 auto',
+          transition: 'background 0.3s',
+        }}
+      >
+        <Header dark={dark} onToggleDark={setDark} />
+        <ModeSelector mode={mode} onChange={setMode} />
+        {mode === 'solo' ? <SoloTracker /> : <TeamTracker />}
+      </div>
+    </ConfigProvider>
+  );
+};
 
 export default App;
