@@ -2,7 +2,6 @@ export interface SoloStats {
   winCount: number;
   currentStreak: number;
   bestStreak: number;
-  lastWinDate: string | null;
 }
 
 export interface Runner {
@@ -11,7 +10,6 @@ export interface Runner {
   winCount: number;
   currentStreak: number;
   bestStreak: number;
-  lastWinDate: string | null;
 }
 
 export type AppMode = 'solo' | 'team';

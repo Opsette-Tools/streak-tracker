@@ -1,14 +1,21 @@
-import { ConfigProvider, theme } from 'antd';
+import { useState } from 'react';
+import { ConfigProvider, theme, Button, Space } from 'antd';
+import { InfoCircleOutlined, LockOutlined } from '@ant-design/icons';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Header from './components/Header';
 import ModeSelector from './components/ModeSelector';
 import SoloTracker from './components/SoloTracker';
 import TeamTracker from './components/TeamTracker';
+import AboutPage from './components/AboutPage';
+import PrivacyPage from './components/PrivacyPage';
 import type { AppMode } from './types';
+
+type Page = 'main' | 'about' | 'privacy';
 
 const App = () => {
   const [dark, setDark] = useLocalStorage('wt-dark', false);
   const [mode, setMode] = useLocalStorage<AppMode>('wt-mode', 'solo');
+  const [page, setPage] = useState<Page>('main');
 
   return (
     <ConfigProvider
@@ -30,9 +37,25 @@ const App = () => {
           transition: 'background 0.3s',
         }}
       >
-        <Header dark={dark} onToggleDark={setDark} />
-        <ModeSelector mode={mode} onChange={setMode} />
-        {mode === 'solo' ? <SoloTracker /> : <TeamTracker />}
+        {page === 'main' && (
+          <>
+            <Header dark={dark} onToggleDark={setDark} />
+            <ModeSelector mode={mode} onChange={setMode} />
+            {mode === 'solo' ? <SoloTracker /> : <TeamTracker />}
+            <div style={{ textAlign: 'center', marginTop: 32, paddingBottom: 16 }}>
+              <Space split={<span style={{ opacity: 0.3 }}>|</span>}>
+                <Button type="link" size="small" icon={<InfoCircleOutlined />} onClick={() => setPage('about')}>
+                  How to Use
+                </Button>
+                <Button type="link" size="small" icon={<LockOutlined />} onClick={() => setPage('privacy')}>
+                  Privacy
+                </Button>
+              </Space>
+            </div>
+          </>
+        )}
+        {page === 'about' && <AboutPage onBack={() => setPage('main')} />}
+        {page === 'privacy' && <PrivacyPage onBack={() => setPage('main')} />}
       </div>
     </ConfigProvider>
   );

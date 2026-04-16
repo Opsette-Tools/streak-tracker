@@ -9,7 +9,7 @@ interface Props {
   onCancel: () => void;
 }
 
-export default function AddRunnerModal({ open, initialName = '', title = 'Add Runner', onOk, onCancel }: Props) {
+export default function AddRunnerModal({ open, initialName = '', title = 'Add Player', onOk, onCancel }: Props) {
   const [name, setName] = useState(initialName);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function AddRunnerModal({ open, initialName = '', title = 'Add Ru
       okButtonProps={{ disabled: !name.trim() }}
     >
       <Input
-        placeholder="Runner name"
+        placeholder="Player name"
         value={name}
         onChange={e => setName(e.target.value)}
         onPressEnter={() => { if (name.trim()) onOk(name.trim()); }}

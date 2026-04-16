@@ -5,26 +5,18 @@ const DEFAULT_SOLO: SoloStats = {
   winCount: 0,
   currentStreak: 0,
   bestStreak: 0,
-  lastWinDate: null,
 };
 
 export function useSoloStats() {
   const [stats, setStats] = useLocalStorage<SoloStats>('wt-solo', DEFAULT_SOLO);
 
-  const today = () => new Date().toDateString();
-
   const addWin = () => {
     setStats(prev => {
-      const isConsecutiveDay =
-        prev.lastWinDate &&
-        (prev.lastWinDate === today() ||
-          prev.lastWinDate === new Date(Date.now() - 86400000).toDateString());
-      const newStreak = isConsecutiveDay ? prev.currentStreak + 1 : 1;
+      const newStreak = prev.currentStreak + 1;
       return {
         winCount: prev.winCount + 1,
         currentStreak: newStreak,
         bestStreak: Math.max(prev.bestStreak, newStreak),
-        lastWinDate: today(),
       };
     });
   };
@@ -32,17 +24,23 @@ export function useSoloStats() {
   const undoWin = () => {
     setStats(prev => {
       if (prev.winCount === 0) return prev;
-      const newStreak = Math.max(0, prev.currentStreak - 1);
       return {
+        ...prev,
         winCount: prev.winCount - 1,
-        currentStreak: newStreak,
-        bestStreak: Math.max(newStreak, prev.currentStreak === prev.bestStreak ? newStreak : prev.bestStreak),
-        lastWinDate: prev.lastWinDate,
+        currentStreak: Math.max(0, prev.currentStreak - 1),
       };
     });
   };
 
+  const newStreak = () => {
+    setStats(prev => ({
+      winCount: 0,
+      currentStreak: 0,
+      bestStreak: prev.bestStreak,
+    }));
+  };
+
   const reset = () => setStats(DEFAULT_SOLO);
 
-  return { stats, addWin, undoWin, reset };
+  return { stats, addWin, undoWin, newStreak, reset };
 }

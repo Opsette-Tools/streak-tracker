@@ -1,16 +1,25 @@
 import { Card, Statistic, Button, Modal, Space, Row, Col } from 'antd';
-import { UndoOutlined, DeleteOutlined, FireOutlined, StarOutlined } from '@ant-design/icons';
+import { UndoOutlined, DeleteOutlined, FireOutlined, StarOutlined, ReloadOutlined } from '@ant-design/icons';
 import WinButton from './WinButton';
 import { useSoloStats } from '../hooks/useSoloStats';
 
 export default function SoloTracker() {
-  const { stats, addWin, undoWin, reset } = useSoloStats();
+  const { stats, addWin, undoWin, newStreak, reset } = useSoloStats();
+
+  const confirmNewStreak = () => {
+    Modal.confirm({
+      title: 'Start a new streak?',
+      content: 'This will reset your win count and current streak, but your best streak is preserved.',
+      okText: 'New Streak',
+      onOk: newStreak,
+    });
+  };
 
   const confirmReset = () => {
     Modal.confirm({
-      title: 'Reset all solo stats?',
-      content: 'This will clear your win count and streaks. This cannot be undone.',
-      okText: 'Reset',
+      title: 'Reset everything?',
+      content: 'This will clear your win count, current streak, and best streak. This cannot be undone.',
+      okText: 'Reset All',
       okButtonProps: { danger: true },
       onOk: reset,
     });
@@ -45,12 +54,15 @@ export default function SoloTracker() {
 
       <Space direction="vertical" style={{ width: '100%' }} size="middle">
         <WinButton onClick={addWin} />
-        <Space style={{ width: '100%', justifyContent: 'center' }}>
+        <Space style={{ width: '100%', justifyContent: 'center' }} wrap>
           <Button icon={<UndoOutlined />} onClick={undoWin} disabled={stats.winCount === 0}>
-            Undo Last Win
+            Undo Last
           </Button>
-          <Button icon={<DeleteOutlined />} danger onClick={confirmReset} disabled={stats.winCount === 0}>
-            Reset
+          <Button icon={<ReloadOutlined />} onClick={confirmNewStreak} disabled={stats.winCount === 0}>
+            New Streak
+          </Button>
+          <Button icon={<DeleteOutlined />} danger onClick={confirmReset} disabled={stats.winCount === 0 && stats.bestStreak === 0}>
+            Reset All
           </Button>
         </Space>
       </Space>

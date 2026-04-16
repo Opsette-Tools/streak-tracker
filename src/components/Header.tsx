@@ -12,7 +12,10 @@ export default function Header({ dark, onToggleDark }: HeaderProps) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0' }}>
       <div>
-        <Title level={3} style={{ margin: 0 }}>🏆 Win Tracker</Title>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" width={28} height={28} />
+          <Title level={3} style={{ margin: 0 }}>Streak Tracker</Title>
+        </div>
         <Text type="secondary">Track your momentum. Stack your wins.</Text>
       </div>
       <Space>

@@ -5,8 +5,6 @@ export function useTeamStats() {
   const [runners, setRunners] = useLocalStorage<Runner[]>('wt-team', []);
   const [sortBy, setSortBy] = useLocalStorage<SortBy>('wt-sort', 'wins');
 
-  const today = () => new Date().toDateString();
-
   const addRunner = (name: string) => {
     const runner: Runner = {
       id: crypto.randomUUID(),
@@ -14,7 +12,6 @@ export function useTeamStats() {
       winCount: 0,
       currentStreak: 0,
       bestStreak: 0,
-      lastWinDate: null,
     };
     setRunners(prev => [...prev, runner]);
   };
@@ -31,21 +28,27 @@ export function useTeamStats() {
     setRunners(prev =>
       prev.map(r => {
         if (r.id !== id) return r;
-        const isConsecutive =
-          r.lastWinDate &&
-          (r.lastWinDate === today() ||
-            r.lastWinDate === new Date(Date.now() - 86400000).toDateString());
-        const newStreak = isConsecutive ? r.currentStreak + 1 : 1;
+        const newStreak = r.currentStreak + 1;
         return {
           ...r,
           winCount: r.winCount + 1,
           currentStreak: newStreak,
           bestStreak: Math.max(r.bestStreak, newStreak),
-          lastWinDate: today(),
         };
       })
     );
   };
+
+  const resetRunnerStreak = (id: string) => {
+    setRunners(prev =>
+      prev.map(r => {
+        if (r.id !== id) return r;
+        return { ...r, winCount: 0, currentStreak: 0 };
+      })
+    );
+  };
+
+  const resetAll = () => setRunners([]);
 
   const sorted = [...runners].sort((a, b) => {
     if (sortBy === 'wins') return b.winCount - a.winCount;
@@ -53,5 +56,5 @@ export function useTeamStats() {
     return b.bestStreak - a.bestStreak;
   });
 
-  return { runners: sorted, sortBy, setSortBy, addRunner, removeRunner, renameRunner, addWinToRunner };
+  return { runners: sorted, sortBy, setSortBy, addRunner, removeRunner, renameRunner, addWinToRunner, resetRunnerStreak, resetAll };
 }

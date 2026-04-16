@@ -1,5 +1,5 @@
-import { Card, List, Button, Select, Space, Typography, Modal, Empty, Tag, Badge } from 'antd';
-import { PlusOutlined, DeleteOutlined, EditOutlined, FireOutlined, StarOutlined, CrownOutlined } from '@ant-design/icons';
+import { Card, List, Button, Select, Space, Typography, Modal, Empty, Tag } from 'antd';
+import { PlusOutlined, DeleteOutlined, EditOutlined, FireOutlined, StarOutlined, CrownOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import WinButton from './WinButton';
 import AddRunnerModal from './AddRunnerModal';
@@ -9,7 +9,7 @@ import type { SortBy } from '../types';
 const { Text } = Typography;
 
 export default function TeamTracker() {
-  const { runners, sortBy, setSortBy, addRunner, removeRunner, renameRunner, addWinToRunner } = useTeamStats();
+  const { runners, sortBy, setSortBy, addRunner, removeRunner, renameRunner, addWinToRunner, resetRunnerStreak, resetAll } = useTeamStats();
   const [addOpen, setAddOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const editRunner = runners.find(r => r.id === editId);
@@ -24,16 +24,27 @@ export default function TeamTracker() {
     });
   };
 
+  const confirmResetAll = () => {
+    Modal.confirm({
+      title: 'Reset all players?',
+      content: 'This will remove all players and their stats. This cannot be undone.',
+      okText: 'Reset All',
+      okButtonProps: { danger: true },
+      onOk: resetAll,
+    });
+  };
+
   if (runners.length === 0) {
     return (
       <Card style={{ borderRadius: 16, textAlign: 'center' }} styles={{ body: { padding: 40 } }}>
-        <Empty description="No runners yet" style={{ marginBottom: 16 }}>
+        <Empty description="No players yet" style={{ marginBottom: 16 }}>
           <Button type="primary" icon={<PlusOutlined />} size="large" onClick={() => setAddOpen(true)}>
-            Add Your First Runner
+            Add Your First Player
           </Button>
         </Empty>
         <AddRunnerModal
           open={addOpen}
+          title="Add Player"
           onOk={name => { addRunner(name); setAddOpen(false); }}
           onCancel={() => setAddOpen(false)}
         />
@@ -43,10 +54,15 @@ export default function TeamTracker() {
 
   return (
     <>
-      <Space style={{ width: '100%', justifyContent: 'space-between', marginBottom: 12 }}>
-        <Button type="dashed" icon={<PlusOutlined />} onClick={() => setAddOpen(true)}>
-          Add Runner
-        </Button>
+      <Space style={{ width: '100%', justifyContent: 'space-between', marginBottom: 12 }} wrap>
+        <Space size="small">
+          <Button type="dashed" icon={<PlusOutlined />} onClick={() => setAddOpen(true)}>
+            Add Player
+          </Button>
+          <Button icon={<DeleteOutlined />} danger onClick={confirmResetAll}>
+            Reset All
+          </Button>
+        </Space>
         <Select
           value={sortBy}
           onChange={v => setSortBy(v as SortBy)}
@@ -84,6 +100,7 @@ export default function TeamTracker() {
               <Space direction="vertical" size={4} align="end">
                 <WinButton onClick={() => addWinToRunner(runner.id)} label="+1 Win" block={false} size="middle" />
                 <Space size={4}>
+                  <Button size="small" type="text" icon={<ReloadOutlined />} onClick={() => resetRunnerStreak(runner.id)} disabled={runner.winCount === 0} title="New Streak" />
                   <Button size="small" type="text" icon={<EditOutlined />} onClick={() => setEditId(runner.id)} />
                   <Button size="small" type="text" danger icon={<DeleteOutlined />} onClick={() => confirmRemove(runner.id, runner.name)} />
                 </Space>
@@ -95,12 +112,13 @@ export default function TeamTracker() {
 
       <AddRunnerModal
         open={addOpen}
+        title="Add Player"
         onOk={name => { addRunner(name); setAddOpen(false); }}
         onCancel={() => setAddOpen(false)}
       />
       <AddRunnerModal
         open={!!editId}
-        title="Rename Runner"
+        title="Rename Player"
         initialName={editRunner?.name || ''}
         onOk={name => { if (editId) renameRunner(editId, name); setEditId(null); }}
         onCancel={() => setEditId(null)}
