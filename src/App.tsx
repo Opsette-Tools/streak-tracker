@@ -50,6 +50,9 @@ const App = () => {
                 <Button type="link" size="small" icon={<LockOutlined />} onClick={() => setPage('privacy')}>
                   Privacy
                 </Button>
+                <Button type="link" size="small" href="https://opsette.io" target="_blank" rel="noopener noreferrer">
+                  By Opsette
+                </Button>
               </Space>
             </div>
           </>
