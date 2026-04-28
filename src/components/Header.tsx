@@ -1,5 +1,6 @@
 import { Switch, Typography, Space } from 'antd';
 import { BulbOutlined, BulbFilled } from '@ant-design/icons';
+import { ShareAppButton } from '@/components/opsette-share';
 
 const { Title, Text } = Typography;
 
@@ -18,7 +19,8 @@ export default function Header({ dark, onToggleDark }: HeaderProps) {
         </div>
         <Text type="secondary">Track your momentum. Stack your wins.</Text>
       </div>
-      <Space>
+      <Space size="small">
+        <ShareAppButton />
         {dark ? <BulbFilled /> : <BulbOutlined />}
         <Switch checked={dark} onChange={onToggleDark} size="small" />
       </Space>

@@ -1,5 +1,6 @@
 import { Button, Typography, Space } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import { OpsetteFooterLogo } from '@/components/opsette-share';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -54,13 +55,9 @@ export default function AboutPage({ onBack }: Props) {
             </ul>
           </div>
 
-          <Paragraph type="secondary" style={{ textAlign: 'center', fontSize: 12, marginTop: 8 }}>
-            A business tool from Opsette Marketplace. Find more tools at{' '}
-            <Typography.Link href="https://opsette.io" target="_blank" rel="noopener noreferrer">
-              opsette.io
-            </Typography.Link>.
-          </Paragraph>
         </Space>
+
+        <OpsetteFooterLogo />
       </div>
     </div>
   );

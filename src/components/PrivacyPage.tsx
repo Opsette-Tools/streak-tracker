@@ -1,5 +1,6 @@
 import { Button, Typography } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import { OpsetteFooterLogo } from '@/components/opsette-share';
 
 const { Title, Paragraph } = Typography;
 
@@ -39,6 +40,8 @@ export default function PrivacyPage({ onBack }: Props) {
         <Paragraph>
           If you have questions about this policy, you can reach us through the app's GitHub repository.
         </Paragraph>
+
+        <OpsetteFooterLogo />
       </div>
     </div>
   );
