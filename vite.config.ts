@@ -17,17 +17,9 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: "autoUpdate",
       devOptions: { enabled: false },
-      workbox: {},
-      manifest: {
-        name: "Streak Tracker",
-        short_name: "StreakTracker",
-        display: "standalone",
-        theme_color: "#1677ff",
-        background_color: "#f5f5f5",
-        start_url: "/",
-        icons: [
-          { src: "/favicon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" },
-        ],
+      manifest: false,
+      workbox: {
+        navigateFallback: "index.html",
       },
     }),
   ].filter(Boolean),
